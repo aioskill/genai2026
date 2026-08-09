@@ -1,0 +1,25 @@
+langchain==1.3.14
+langchain-openai==1.4.1
+langchain-deepseek==1.1.0
+langchain-ollama==1.1.0
+langchain-chroma==1.1.0
+# load env variables containing api keys
+python-dotenv
+
+openai==2.52.0
+
+
+# interactive chat
+click==8.4.2
+
+# prompt_toolkit is a library for building powerful
+# interactive command line applications in Python.
+# without this library handle arrows keys will be an issue
+prompt_toolkit==3.0.53
+# rich library provides beautiful native spinners
+# show spinner is used while waiting for LLM response
+rich==15.0.0
+
+# Chroma DB is an open-source (apache 2.0) vector store used
+# for storing and retrieving vector embeddings.
+chromadb==1.5.9
