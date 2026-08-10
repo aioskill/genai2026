@@ -37,3 +37,7 @@ promptfoo==0.1.4
 
 # Vector linear algebra
 numpy
+
+# Jupyter interactive notebook
+jupyter
+pandas
