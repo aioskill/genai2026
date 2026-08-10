@@ -15,7 +15,7 @@ def chat_with_felix():
     """Chat with Felix, the chatbot."""
     client = build_client()
     user_request = """
-        When James was 2 years old, his sister was 4 years old. James is now \
+        When James was 2 years old, his sister was 4 years old. James is now 
         30 years old. How old is his sister?
     """
     response = client.responses.create(
@@ -25,7 +25,7 @@ def chat_with_felix():
                        "Provide the output as raw, unformatted text. ")
     )
     output_text = getattr(response, "output_text", None) or "No response generated."
-    print(f"Felix: \n{output_text}")
+    print(f"AI: \n{output_text}")
 
 
 if __name__ == '__main__':

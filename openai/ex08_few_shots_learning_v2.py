@@ -27,15 +27,14 @@ def make_request(client, conversation_id, message:str, model = DEFAULT_MODEL):
     )
 
 
-@click.command()
-@click.option("--model", default=DEFAULT_MODEL, show_default=True, help="OpenAI model to use.")
-def chat_with_felix(model: str):
+def chat_with_felix():
     """Chat with Felix, the chatbot."""
     client = build_client()
     # Initialize conversation with few-shot training items
     conversation = client.conversations.create(
         metadata={"bot": "felix-chatbot"},
         items=[
+            {"role": "system", "content": "Produce output messages in plain text. No markdown."},
             {"role": "user", "content": "1"},
             {"role": "assistant", "content": "1 is an odd number so the answer is X."},
             {"role": "user", "content": "2"},

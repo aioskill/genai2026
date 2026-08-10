@@ -43,7 +43,9 @@ def zero_shot_cot(question: str) -> dict:
     client = build_client()
     response = client.responses.create(
         model=DEFAULT_MODEL,
-        instructions="You are a precise reasoning generator. Solve the problem step-by-step.",
+        instructions="You are a precise reasoning generator. "
+                     "Solve the problem step-by-step. "
+                     "Produce plain text output (no markdown).",
         input=prompt
     )
 

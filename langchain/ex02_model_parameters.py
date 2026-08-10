@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 
 load_dotenv()
 
@@ -16,6 +17,8 @@ llm_openai = ChatOpenAI(
     presence_penalty=0.5,
     max_tokens=500,
 )
+
+# llm = ChatAnthropic()
 
 # # DeepSeek
 # llm_deepseek = ChatDeepSeek(

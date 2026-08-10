@@ -12,7 +12,7 @@ client = OpenAI()
 response = client.responses.create(
     model=DEFAULT_MODEL,
     tools=[{"type": "web_search"}],
-    input="What was a positive news story from today?",
+    input="What was a positive news story from today in Mexico?",
 )
 
 print(response.output_text)

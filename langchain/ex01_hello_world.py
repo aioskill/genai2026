@@ -14,9 +14,15 @@ prompt = ChatPromptTemplate.from_template(
     "Explain: {text}. Show raw texts in bullets. Keep output text short")
 model = ChatOpenAI(model=OPENAI_MODEL, max_tokens = 1024)
 
+
+resolved_prompt = prompt.format_messages(text = "langchain")
+print("Resolved prompt:", resolved_prompt[0].content)
+
 # This expression is called LCEL (LangChain Expression Language)
 chain = prompt | model
 response = chain.invoke({"text": "langchain"})
+
+
 
 # Plain Text Output
 print(response.content)

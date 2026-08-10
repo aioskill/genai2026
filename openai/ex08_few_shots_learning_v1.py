@@ -26,10 +26,20 @@ def make_request(client, conversation_id, message:str, model = DEFAULT_MODEL):
         # presence_penalty=0.0
     )
 
+"""
+Find the next output in the sequence. 
+Below are a few examples:
+====
+Input: 1 Output: X
+Input: 2 Output: Y
+Input: 3 Output: Z
+====
 
-@click.command()
-@click.option("--model", default=DEFAULT_MODEL, show_default=True, help="OpenAI model to use.")
-def chat_with_felix(model: str):
+Input: 4 Output: 
+
+"""
+
+def chat_with_felix():
     """Chat with Felix, the chatbot."""
     client = build_client()
     # Initialize conversation with few-shot training items

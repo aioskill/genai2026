@@ -21,6 +21,8 @@ prompt = ChatPromptTemplate.from_messages([
     ("human", "{review}")
 ]).partial(format_instructions=parser.get_format_instructions())
 
+print("format_instructions: ", parser.get_format_instructions())
+
 # Instantiate Model
 model = ChatOpenAI(model=os.environ["OPENAI_MODEL"])
 

@@ -49,7 +49,9 @@ including one of the largest library systems in the world.
 
 collection.add(
     documents = [student_info, club_info, university_info],
-    metadatas = [{"source": "student info"},{"source": "club info"},{'source':'university info'}],
+    metadatas = [{"source": "student info"},
+                 {"source": "club info"},
+                 {'source':'university info'}],
     ids = ["id1", "id2", "id3"]
 )
 
