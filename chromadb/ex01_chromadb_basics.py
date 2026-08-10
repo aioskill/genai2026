@@ -85,6 +85,14 @@ results = collection.query(
 )
 print("Query 3: ", results)
 
+# Included embeddings and distances
+results = collection.query(
+    query_texts=["What is the student name?"],
+    n_results=2,
+    include=["embeddings", "documents", "distances"]
+)
+print("Query 4: ", results)
+
 
 # Update a document
 collection.update(
@@ -123,6 +131,22 @@ results = collection.get(
     where={"tags": {"$contains": "python"}}
 )
 print("Filter by metadata 2: ", results)
+
+# Get Embeddings
+query_results = collection.query(
+    query_texts=["What is the student name?"],
+    n_results=2,
+    include=["embeddings", "documents", "distances"]  # <-- Request embeddings in query output
+)
+print("View embeddings: ", query_results)
+
+# Fetch all documents and their vector embeddings
+all_data = collection.get(
+    include=["embeddings", "documents"]
+)
+
+all_vectors = all_data["embeddings"]
+print("All vectors: ", all_vectors)
 
 # Delete a document
 collection.delete(ids = ['id1'])

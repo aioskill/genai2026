@@ -8,6 +8,13 @@ python-dotenv
 
 openai==2.52.0
 
+# required for doc chunking
+langchain-text-splitters==1.1.2
+
+# Holds components that historically raised security vulnerabilities
+# or CVEs (like code execution and evaluation tools).
+# Also contains experimental research features before they become standard
+langchain-experimental==0.4.2
 
 # interactive chat
 click==8.4.2
@@ -23,3 +30,10 @@ rich==15.0.0
 # Chroma DB is an open-source (apache 2.0) vector store used
 # for storing and retrieving vector embeddings.
 chromadb==1.5.9
+
+# Automated testing that finds & fixes AI risk in development
+# Test driven development
+promptfoo==0.1.4
+
+# Vector linear algebra
+numpy

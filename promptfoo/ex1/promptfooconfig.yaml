@@ -1,0 +1,9 @@
+prompts: [prompts.txt]
+providers: [openai:gpt-5.6-luna]
+tests:
+  - vars:
+      role: Ad copywriter
+  - vars:
+      role: Software developer
+  - vars:
+      role: Marketing manager

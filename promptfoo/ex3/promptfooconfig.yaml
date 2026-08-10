@@ -1,0 +1,23 @@
+prompts: prompts.txt
+providers:
+  - exec:python3 ../../langchain/ex12_langchain_promptfoo.py
+assertionTemplates: &default_assertions
+  - type: is-json
+  - type: contains
+    value: "\"translation\""
+  - type: contains
+    value: "\"from_lang\""
+  - type: contains
+    value: "\"to_lang\""
+  - type: contains
+    value: "\"sentence\""
+tests:
+    - vars:
+        fn: translate(Hi, en, hi)
+      assert: *default_assertions
+    - vars:
+        fn: translate(Hi, en, bn)
+      assert: *default_assertions
+    - vars:
+        fn: translate(Hi, en, es)
+      assert: *default_assertions

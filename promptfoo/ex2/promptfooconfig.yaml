@@ -1,0 +1,7 @@
+prompts: [prompts.txt]
+providers: [openai:gpt-5.6-luna]
+tests:
+  - description: Test 1
+    assert:
+      - type: contains
+        value: 25 years old

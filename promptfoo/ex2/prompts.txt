@@ -1,0 +1,11 @@
+When I was 10 years old, my sister was half my age. Now I am 30 years o\
+ld. How old is my sister?
+---
+user: When Harry was 4 years old, his sister was half of his age. Harry\
+ is now 50 years old. How old is his sister?
+ai: When Harry was 4 years old, his sister was 4/2 years old. This mean\
+s there are 2 years difference between them. Harry is now 50 years old.
+ His sister is 50 - 2 = 48 years old.
+user: When I was 10 years old, my sister was half my age. Now I am 30 y\
+ears old. How old is my sister?
+ai:

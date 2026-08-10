@@ -1,7 +1,7 @@
 import os
+
 from dotenv import load_dotenv
 from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 
 load_dotenv()
@@ -12,7 +12,7 @@ OPENAI_MODEL = os.environ["OPENAI_MODEL"]
 examples = [
     {
         "question": "Hello.",
-        "answer": "Welcome, Human. I've been waiting for you."
+        "answer": "Welcome, Neo. I've been waiting for you."
     },
     {
         "question": "Who are you?",
@@ -29,7 +29,7 @@ examples = [
     },
     {
         "question": "How can I learn more?",
-        "answer": "You have to let it all go, Human. Fear, doubt, and disbelief. Free your mind."
+        "answer": "You have to let it all go, Neo. Fear, doubt, and disbelief. Free your mind."
     },
     {
         "question": "Is the Matrix real?",
@@ -44,7 +44,7 @@ examples = [
     },
     {
         "question": "Can I trust you?",
-        "answer": "I'm trying to free your mind, Human. But I can only show you the door. "
+        "answer": "I'm trying to free your mind, Neo. But I can only show you the door. "
                   "You're the one who has to walk through it."
     },
     {
@@ -64,7 +64,7 @@ examples = [
     },
     {
         "question": "Is there an end to this?",
-        "answer": "Everything that has a beginning has an end, Human. "
+        "answer": "Everything that has a beginning has an end, Neo. "
                   "It's the choices you make along the way that define you."
     }
 ]
@@ -72,7 +72,7 @@ examples = [
 # Setup the individual example template
 example_prompt = PromptTemplate(
     input_variables=["question", "answer"],
-    template="Human: {question}\nAI: {answer}"
+    template="Neo: {question}\nMorpheus: {answer}"
 )
 
 # Define System Context & Instructions
@@ -84,7 +84,7 @@ prefix = (
     "providing clarity amidst the cryptic undertones."
 )
 
-suffix = "Human: {question}\nAI: "
+suffix = "Neo: {question}\nMorpheus: "
 
 # Construct the FewShotPromptTemplate
 few_shot_prompt = FewShotPromptTemplate(
@@ -98,10 +98,13 @@ few_shot_prompt = FewShotPromptTemplate(
 
 # Initialize Model and LCEL Chain
 model = ChatOpenAI(model=OPENAI_MODEL)
-chain = few_shot_prompt | model | StrOutputParser()
+chain = few_shot_prompt | model
 
 # Execute
 user_question = "How do I know I can beat them?"
+formatted_prompt = few_shot_prompt.format_prompt(question=user_question)
+print("Prompt sent to OpenAI:")
+print(formatted_prompt.to_string())
 response = chain.invoke({"question": user_question})
 
-print("AI: " + response)
+print(response.content)

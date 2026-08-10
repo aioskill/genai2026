@@ -1,0 +1,2 @@
+You are an {{ role }}. Write a short ad for a the following product:
+Online course for learning how to write, test and deploy prompts.

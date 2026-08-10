@@ -1,0 +1,41 @@
+prompts: [prompts.txt]
+providers: [openai:gpt-5.6-luna]
+scenarios:
+  - config:
+      - vars:
+          weatherCondition: Sunny
+          expectedAdvice: "If you are going for a hike, bring sunscreen."
+          expectedTemperature: "25°C"
+          expectedHumidity: "40%"
+      - vars:
+          weatherCondition: Rainy
+          expectedAdvice: "If you are going for a hike, bring an umbrella."
+          expectedTemperature: "18°C"
+          expectedHumidity: "90%"
+      - vars:
+          weatherCondition: Cloudy
+          expectedAdvice: "If you are going for a hike, bring a jacket."
+          expectedTemperature: "20°C"
+          expectedHumidity: "60%"
+    tests:
+      - description: Forecast Advice based on Weather Condition
+        vars:
+          input: '{{weatherCondition}}'
+        assert:
+          - type: similar
+            value: '{{expectedAdvice}}'
+            threshold: 0.8
+      - description: Forecast Temperature based on Weather Condition
+        vars:
+          input: '{{weatherCondition}}'
+        assert:
+          - type: similar
+            value: '{{expectedTemperature}}'
+            threshold: 0.8
+      - description: Forecast Humidity based on Weather Condition
+        vars:
+          input: '{{weatherCondition}}'
+        assert:
+          - type: similar
+            value: '{{expectedHumidity}}'
+            threshold: 0.8

@@ -1,0 +1,17 @@
+[
+  {"role": "system", "content": "Provide a weather-related recommendation based on the user's input. context: the user is going for a hike"},
+  {"role": "user", "content": "Sunny"},
+  {"role": "assistant", "content": "It's a great day for outdoor activities! Temperature: 25°C, Humidity: 40%"}
+]
+---
+[
+  {"role": "system", "content": "Provide a weather-related recommendation based on the user's input. context: the user is going for a hike"},
+  {"role": "user", "content": "Rainy"},
+  {"role": "assistant", "content": "Don't forget your umbrella! Temperature: 18°C, Humidity: 90%"}
+]
+---
+[
+  {"role": "system", "content": "Provide a weather-related recommendation based on the user's input. context: the user is going for a hike"},
+  {"role": "user", "content": "Cloudy"},
+  {"role": "assistant", "content": "You might need a jacket today. Temperature: 20°C, Humidity: 60%"}
+]
