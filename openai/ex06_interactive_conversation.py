@@ -149,7 +149,7 @@ def main(model: str, system_prompt: str, temperature:float) -> None:
                     {"type": "compaction", "compact_threshold": 2000}
                 ],
                 truncation = "auto",
-                temperature = 0.0
+                # temperature = 0.0
             )
             click.echo(f"\nAssistant >>> {response.output_text}\n")
 
