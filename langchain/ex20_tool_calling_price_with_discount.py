@@ -1,25 +1,24 @@
+import os
+
 from dotenv import load_dotenv
-
-load_dotenv()
-
 from difflib import get_close_matches
-from langchain.chat_models import init_chat_model
+from langchain_openai import ChatOpenAI
 from langchain.tools import tool
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
+from langchain_core.tools import ToolException
 from langsmith import traceable
 
+load_dotenv()
 MAX_ITERATIONS = 10
-MODEL = "qwen3:1.7b"
-
 
 # --- Tools (LangChain @tool decorator) ---
-
 
 @tool
 def get_product_price(product: str) -> dict:
     """Look up the price of a product in the catalog.
 
-    Returns a structured result so missing products can be handled gracefully.
+    Raises ``ToolException`` when the product is not in the catalog. LangChain
+    treats this as a tool failure and sends the message back to the agent.
     """
     print(f"    >> Executing get_product_price(product='{product}')")
     prices = {"laptop": 1299.99, "headphones": 149.95, "keyboard": 89.50}
@@ -27,12 +26,12 @@ def get_product_price(product: str) -> dict:
         return {"found": True, "product": product, "price": prices[product]}
 
     suggestions = get_close_matches(product, prices.keys(), n=3, cutoff=0.4)
-    return {
-        "found": False,
-        "product": product,
-        "message": f"Product '{product}' not found in catalog.",
-        "suggestions": suggestions,
-    }
+    suggestion_text = (
+        f" Did you mean: {', '.join(suggestions)}?" if suggestions else ""
+    )
+    raise ToolException(
+        f"Product '{product}' not found in catalog.{suggestion_text}"
+    )
 
 
 @tool
@@ -53,7 +52,10 @@ def run_agent(question: str):
     tools = [get_product_price, apply_discount]
     tools_dict = {t.name: t for t in tools}
 
-    llm = init_chat_model(f"ollama:{MODEL}", temperature=0)
+    llm = ChatOpenAI(model=os.environ["OPENAI_MODEL"],
+                     reasoning_effort="none",
+                     )
+
     llm_with_tools = llm.bind_tools(tools)
 
     print(f"Question: {question}")
@@ -75,9 +77,10 @@ def run_agent(question: str):
                 "Always use the apply_discount tool.\n"
                 "4. If the user does not specify a discount tier, "
                 "ask them which tier to use — do NOT assume one.\n"
-                "5. If get_product_price returns found=false, do not call apply_discount. "
-                "Apologize briefly, mention the product was not found, and ask the user "
-                "to confirm the product name or choose a suggested alternative if one is provided."
+                "5. If get_product_price reports that a product is unavailable, "
+                "do not call apply_discount. Apologize briefly, explain that the product "
+                "was not found, and ask the user to confirm the product name or choose a "
+                "suggested alternative if one is provided."
             )
         ),
         HumanMessage(content=question),
@@ -109,24 +112,14 @@ def run_agent(question: str):
 
         try:
             observation = tool_to_use.invoke(tool_args)
+        except ToolException as e:
+            # ToolException is an expected, user-correctable tool failure. Keep
+            # its message so the model can explain the problem or suggest a fix.
+            observation = str(e)
         except Exception as e:
-            observation = {
-                "found": False,
-                "error": str(e),
-                "message": "Tool execution failed while looking up the product.",
-            }
+            observation = f"Tool execution failed: {e}"
 
         print(f"  [Tool Result] {observation}")
-
-        if tool_name == "get_product_price" and isinstance(observation, dict) and not observation.get("found", True):
-            suggestions = observation.get("suggestions") or []
-            suggestion_text = (
-                f" Did you mean: {', '.join(suggestions)}?" if suggestions else ""
-            )
-            message = observation.get("message", "Product not found in catalog.")
-            final_message = f"{message}{suggestion_text}"
-            print(f"\nFinal Answer: {final_message}")
-            return final_message
 
         messages.append(ai_message)
         messages.append(
@@ -138,6 +131,5 @@ def run_agent(question: str):
 
 
 if __name__ == "__main__":
-    print("Hello LangChain Agent (.bind_tools)!")
-    print()
+    print("Hello LangChain Agent")
     result = run_agent("What is the price of a laptop after applying a gold discount?")
