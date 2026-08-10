@@ -28,7 +28,7 @@ response = client.responses.create(
         "Explain the difference between temperature and top_p in 4 short sentences. "
         "Keep the answer text-only."
     ),
-    text={"verbosity": "medium", "format": "text"},
+    text={"verbosity": "medium", "format": {"type": "text"}},
 )
 
 print(response.output_text)
