@@ -41,3 +41,11 @@ numpy
 # Jupyter interactive notebook
 jupyter
 pandas
+
+# PDF reader
+langchain_community
+pypdf
+
+# expose query cabability over REST api
+fastapi
+uvicorn
