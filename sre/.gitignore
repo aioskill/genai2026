@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.mcp_prompt_history
+var/*.log
+var/*.log.*
+logs/*.log
+logs/*.log.*

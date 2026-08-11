@@ -42,7 +42,7 @@ def main() -> None:
     # "Give the recommended coffee-to-water ratio for the AquaBrew CM-200."
     # "How do I remove limescale from the ThermoKettle Pro TK-1?"
 
-    default_chroma_db_path = os.path.join(tempfile.gettempdir(), "pdf_rag")
+    default_chroma_db_path = os.path.join(tempfile.gettempdir(), "ex01_pdf_rag")
     parser = argparse.ArgumentParser(description="Query indexed PDF documents")
     parser.add_argument("--db-dir", type=Path, default=Path(default_chroma_db_path))
     parser.add_argument("--question", required=True)

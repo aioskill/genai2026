@@ -57,7 +57,7 @@ def format_documents(documents) -> str:
 
 
 def get_vector_store() -> Chroma:
-    default_chroma_db_path = os.path.join(tempfile.gettempdir(), "pdf_rag")
+    default_chroma_db_path = os.path.join(tempfile.gettempdir(), "ex01_pdf_rag")
     db_dir = Path(os.getenv("CHROMA_DB_DIR", default_chroma_db_path))
     return Chroma(
         collection_name="pdf_documents",

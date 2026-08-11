@@ -1,0 +1,7 @@
+fastmcp>=2.0,<3
+PyYAML>=6.0
+openai>=2.0,<3
+click>=8.1
+rich>=13.0
+prompt-toolkit>=3.0
+python-dotenv>=1.0

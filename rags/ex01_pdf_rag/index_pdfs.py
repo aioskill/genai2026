@@ -73,7 +73,7 @@ def index_pdfs(pdf_dir: Path, db_dir: Path) -> int:
 
 
 def main() -> None:
-    default_chroma_db_path = os.path.join(tempfile.gettempdir(), "pdf_rag")
+    default_chroma_db_path = os.path.join(tempfile.gettempdir(), "ex01_pdf_rag")
     parser = argparse.ArgumentParser(description="Index PDFs into Chroma")
     parser.add_argument("--pdf-dir", type=Path, required=True)
     parser.add_argument("--db-dir", type=Path, default=Path(default_chroma_db_path))

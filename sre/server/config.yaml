@@ -1,0 +1,67 @@
+version: "1.0.0"
+gateway:
+  id: "mcp-gateway-dev"
+  environment: "development"
+  host: "127.0.0.1"
+  port: 8000
+  timezone: "UTC"
+  log_level: "INFO"
+  log_path: "./var/mcp-gateway.log"
+  audit_log_path: "./var/audit.log"
+  scheduler_db_path: "./var/scheduler.db"
+  ssh_user: "ubuntu"
+  ssh_connect_timeout_seconds: 10
+  ssh_command_timeout_seconds: 120
+  max_concurrency: 50
+  max_fleet_nodes: 1000
+  max_request_nodes: 200
+  dry_run_mutations: true
+  allowed_roots: ["/var/log", "/etc", "/opt", "/srv", "/tmp"]
+  denied_paths: ["/etc/shadow", "/etc/sudoers", "/etc/pam.d"]
+  denied_patterns: ["*.key", "*.pem", "*/.ssh/*", "*id_rsa*", "*/ssh_host_*_key*"]
+  # HITL path-approval flow: enforce_path_sandbox restricts file access to
+  # allowed_roots unless a path is operator-approved via approve_path_access.
+  # Disable to bypass the allowed-roots boundary (denied paths still block).
+  # Full HITL approval is a Phase 2 implementation goal.
+  enforce_path_sandbox: false
+
+# SSH uses the system default private-key selection; no IdentityFile is set.
+# SSH host keys must be pinned in known_hosts_path.
+ssh:
+  known_hosts_path: "~/.ssh/known_hosts"
+  strict_host_key_checking: true
+  # Run privileged commands (systemctl mutations, etc.) through `sudo -n`.
+  # Requires the ssh_user to have a passwordless sudo rule on every managed
+  # node, e.g. an /etc/sudoers.d entry:
+  #   <ssh_user> ALL=(ALL) NOPASSWD: ALL
+  passwordless_sudo: true
+
+fleet_inventory:
+  servers:
+    - id: "sa01"
+      host: "sa01"
+      port: 22
+      tags: ["env:staging"]
+      enabled: true
+    - id: "sa02"
+      host: "sa02"
+      port: 22
+      tags: ["env:staging"]
+      enabled: true
+    - id: "sa03"
+      host: "sa03"
+      port: 22
+      tags: ["env:staging"]
+      enabled: true
+
+maintenance_windows: []
+deferral_policies:
+  default_policy:
+    enforce_maintenance_windows: false
+    auto_defer_outside_window: false
+    require_dry_run_first: true
+    default_concurrency_limit: 10
+task_scheduler:
+  poll_interval_seconds: 10
+  max_retries: 2
+  retry_backoff_seconds: 300
