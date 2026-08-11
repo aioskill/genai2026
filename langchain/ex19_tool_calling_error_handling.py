@@ -28,7 +28,7 @@ load_dotenv()
 #
 # - "both"  : Runs CASE A sequentially, followed by CASE B.
 
-RUN_CASE = "both"  # Options: "hitl", "error", "both"
+RUN_CASE = "error"  # Options: "hitl", "error", "both"
 
 
 # ==========================================

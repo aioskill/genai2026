@@ -47,14 +47,38 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _coerce_json(payload):
-    if isinstance(payload, str):
-        return json.loads(payload)
-    return payload
+    if not isinstance(payload, str):
+        return payload
+
+    text = payload.strip()
+    if not text:
+        return text
+
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        decoder = json.JSONDecoder()
+        values = []
+        idx = 0
+        length = len(text)
+        while idx < length:
+            while idx < length and text[idx].isspace():
+                idx += 1
+            if idx >= length:
+                break
+            value, end = decoder.raw_decode(text, idx)
+            values.append(value)
+            idx = end
+        if values:
+            return values if len(values) > 1 else values[0]
+        return payload
 
 
 async def run_tool(session: ClientSession, tool_name: str, tool_args: dict) -> str:
     result = await session.call_tool(tool_name, tool_args)
-    return result.content[0].text if result.content else ""
+    if not result.content:
+        return ""
+    return "\n".join(getattr(content, "text", str(content)) for content in result.content)
 
 
 def _print_node_update(node_name: str, node_update) -> None:

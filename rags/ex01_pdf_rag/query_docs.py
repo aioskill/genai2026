@@ -59,7 +59,7 @@ def main() -> None:
         collection_name="pdf_documents",
         persist_directory=str(args.db_dir),
     )
-    documents = vector_store.similarity_search(args.question, k=args.k)
+    documents = vector_store.similarity_search_with_score(args.question, k=args.k)
     if not documents:
         print("No matching document chunks were found.")
         return
@@ -74,7 +74,8 @@ def main() -> None:
             ("human", "{question}"),
         ]
     )
-    chain = prompt | ChatOpenAI(model=args.model, temperature=0) | StrOutputParser()
+    documents = [r[0] for r in documents]
+    chain = prompt | ChatOpenAI(model=args.model) | StrOutputParser()
     answer = chain.invoke(
         {"context": format_documents(documents), "question": args.question}
     )
