@@ -1,0 +1,6 @@
+mcp==1.29.0
+fastmcp==2.14.7
+chromadb==1.5.9
+uvicorn==0.52.1
+langgraph==1.2.10
+pytest

@@ -99,16 +99,16 @@ def upsert_resolution(doc_id: str, document: str, error_code: str, resolution_id
         "resolution_id": resolution_id,
     }
 
-
-@mcp.tool()
-def upsert_resolution(doc_id: str, document: str, error_code: str, resolution_id: str) -> dict:
-    """Upserts a resolution document into the ChromaDB knowledge base, inserting or replacing by ID."""
-    collection.upsert(
-        ids=[doc_id],
-        documents=[document],
-        metadatas=[{"error_code": error_code, "resolution_id": resolution_id}],
-    )
-    return {"status": "upserted", "doc_id": doc_id, "resolution_id": resolution_id}
+#
+# @mcp.tool()
+# def upsert_resolution(doc_id: str, document: str, error_code: str, resolution_id: str) -> dict:
+#     """Upserts a resolution document into the ChromaDB knowledge base, inserting or replacing by ID."""
+#     collection.upsert(
+#         ids=[doc_id],
+#         documents=[document],
+#         metadatas=[{"error_code": error_code, "resolution_id": resolution_id}],
+#     )
+#     return {"status": "upserted", "doc_id": doc_id, "resolution_id": resolution_id}
 
 
 @mcp.tool()

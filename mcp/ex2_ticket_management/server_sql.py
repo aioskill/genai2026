@@ -45,14 +45,14 @@ def init_db():
         )
     """)
     # Seed open incidents
-    cursor.execute("""
-        INSERT OR REPLACE INTO tickets (id, title, status, error_code, affected_file)
-        VALUES ('TICK-101', 'Database connection timeouts in production', 'OPEN', 'ERR_DB_TIMEOUT', 'db_config.json')
-    """)
-    cursor.execute("""
-        INSERT OR REPLACE INTO tickets (id, title, status, error_code, affected_file)
-        VALUES ('TICK-102', 'Legacy printer queue stuck in office', 'OPEN', 'ERR_PRINTER_JAM', 'printer_config.json')
-    """)
+    # cursor.execute("""
+    #     INSERT OR REPLACE INTO tickets (id, title, status, error_code, affected_file)
+    #     VALUES ('TICK-101', 'Database connection timeouts in production', 'OPEN', 'ERR_DB_TIMEOUT', 'db_config.json')
+    # """)
+    # cursor.execute("""
+    #     INSERT OR REPLACE INTO tickets (id, title, status, error_code, affected_file)
+    #     VALUES ('TICK-102', 'Legacy printer queue stuck in office', 'OPEN', 'ERR_PRINTER_JAM', 'printer_config.json')
+    # """)
     conn.commit()
     conn.close()
 

@@ -1,0 +1,8 @@
+HITL
+==============================
+1. Approver wants to review patch details before saying Y/N
+2. Approved with a comment
+3. Approve but defer the resolution at a time later time point
+4. Needs more explicit choices
+5. Give resource specific approval
+6. Record the approval for auditing.

@@ -36,17 +36,33 @@ chromadb==1.5.9
 # Test driven development
 promptfoo==0.1.4
 
-# Vector linear algebra
-numpy
+# linear algebra
+numpy==2.5.1
 
 # Jupyter interactive notebook
-jupyter
-pandas
+jupyter==1.1.1
 
 # PDF reader
-langchain_community
-pypdf
+langchain_community==0.4.2
+pypdf==6.15.0
 
 # expose query cabability over REST api
 fastapi
 uvicorn
+
+# vector search
+faiss-cpu==1.15.0
+transformers
+huggingface_hub
+datasets==5.0.1
+evaluate==0.4.6
+accelerate==1.15.0
+
+
+# machine learning
+pandas==3.0.5
+tensorflow==2.21.0
+scikit-learn==1.9.0
+numpy==2.5.1
+matplotlib==3.11.1
+duckdb==1.5.5
