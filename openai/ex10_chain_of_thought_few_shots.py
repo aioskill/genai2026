@@ -50,7 +50,8 @@ def evaluate_refund_request(client, user_request: str):
     # Create/seed conversation
     conversation = client.conversations.create(items=items)
 
-    SYSTEM_PROMPT = ("You are a Refund Fraud Examiner. Reason step-by-step before making a decision.")
+    SYSTEM_PROMPT = ("You are a Refund Fraud Examiner. Reason step-by-step before making a decision."
+                     "Produce the output in plain text without any markdown notations.")
 
     # Process the active input
     response = client.responses.create(

@@ -26,7 +26,7 @@ OPENAI_MODEL = os.getenv("OPENAI_MODEL")
 # """ # Perplexity Score : 1.3597
 
 # prompt = "Generate a 2-day itinerary for a cultural trip to Rome." # Perplexity Score : 1.2245
-prompt = "Craft a detailed 2-day cultural journey plan for visiting Rome's historic landmarks and museums." # Perplexity Score : 1.2217
+prompt = "Craft a detailed 2-day cultural journey plan for visiting Rome's historic landmarks and museums." # Perplexity Score : 1.2217, 1.2856
 
 client = openai.OpenAI()
 

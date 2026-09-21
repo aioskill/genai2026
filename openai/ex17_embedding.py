@@ -20,7 +20,7 @@ vector_small = response_small.data[0].embedding
 print(f"Model: text-embedding-3-small")
 print(f"Requested Dimensions: 512")
 print(f"Actual Vector Length: {len(vector_small)}")
-print(f"Sample Vector Output: {vector_small[:3]}...\n")
+print(f"Sample Vector Output (truncated): {str(vector_small)[:300]}...\n")
 
 
 # ------------------------------------------------------------------
@@ -37,7 +37,7 @@ vector_large = response_large.data[0].embedding
 print(f"Model: text-embedding-3-large")
 print(f"Requested Dimensions: 1024")
 print(f"Actual Vector Length: {len(vector_large)}")
-print(f"Sample Vector Output: {vector_large[:3]}...")
+print(f"Sample Vector Output (truncated): {str(vector_large)[:300]}...")
 
 norm = np.linalg.norm(vector_large)
 print(f"Norm : {norm}")

@@ -60,7 +60,7 @@ collection.add(
 # In our case, it is returning two similar results.
 results = collection.query(
     query_texts=["What is the student name?"],
-    n_results=2
+    n_results=1
 )
 print("Query 1: ", results)
 

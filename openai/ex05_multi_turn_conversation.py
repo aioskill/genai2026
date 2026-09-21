@@ -70,6 +70,8 @@ def run_chat_session() -> None:
 
     print("Initializing AI Support Session...")
 
+    system_message = "You are a helpful, concise IT support assistant."
+
     conversation = client.conversations.create(
         metadata={"topic": "printer-support-demo"},
         items=[
@@ -85,7 +87,7 @@ def run_chat_session() -> None:
     first_turn = client.responses.create(
         model=DEFAULT_MODEL,
         conversation={"id": conversation.id},
-        instructions="You are a helpful, concise IT support assistant.",
+        instructions=system_message,
         input="Diagnose the printer issue and give the next step.",
     )
     print_turn("AI", first_turn.output_text)
@@ -93,7 +95,7 @@ def run_chat_session() -> None:
     second_turn = client.responses.create(
         model=DEFAULT_MODEL,
         conversation={"id": conversation.id},
-        instructions="You are a helpful, concise IT support assistant.",
+        instructions=system_message,
         input="I already tried restarting it, but the light is still flashing. What next?",
     )
     print_turn("AI", second_turn.output_text)

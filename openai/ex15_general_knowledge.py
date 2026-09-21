@@ -45,4 +45,4 @@ def answer_with_generated_knowledge(question: str) -> str:
 
 # Example Query
 result = answer_with_generated_knowledge("Is it safe to place a sealed glass jar full of water in the freezer?")
-print(result)
+print("AI Answer: \n ", result)

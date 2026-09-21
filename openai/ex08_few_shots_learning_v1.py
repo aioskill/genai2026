@@ -55,7 +55,7 @@ def chat_with_felix():
     for message in ("3", "4", "alpha"):
         response = make_request(client, conversation.id, message)
         output_text = getattr(response, "output_text", None) or "No response generated."
-        print(f"User: {message}, Felix: {output_text}")
+        print(f"User: {message}, AI: {output_text}")
 
 
 if __name__ == '__main__':

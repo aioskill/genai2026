@@ -12,7 +12,12 @@ client = OpenAI()
 response = client.responses.create(
     model=DEFAULT_MODEL,
     tools=[{"type": "web_search"}],
-    input="What was a positive news story from today in Mexico?",
+    input="What was a funny news story from today in India?",
 )
-
-print(response.output_text)
+print("Funny news: ", response.output_text)
+follow_up = client.responses.create(
+    model=DEFAULT_MODEL,
+    previous_response_id=response.id,
+    input="why do you find it funny?"
+)
+print("Why funny: ", follow_up.output_text)

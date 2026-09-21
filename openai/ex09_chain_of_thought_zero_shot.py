@@ -6,6 +6,8 @@ from openai import OpenAI
 load_dotenv()
 DEFAULT_MODEL = os.environ["OPENAI_MODEL"]
 
+system_instruction = ("Think step by step. In the output include the reasoning in bullets. "
+                       "Provide the output as raw, unformatted text. ")
 
 def build_client() -> OpenAI:
     return OpenAI()
@@ -21,11 +23,9 @@ def chat_with_felix():
     response = client.responses.create(
         model=DEFAULT_MODEL,
         input=user_request,
-        instructions = ("Think step by step. In the output include the reasoning in bullets. "
-                       "Provide the output as raw, unformatted text. ")
+        instructions = system_instruction
     )
-    output_text = getattr(response, "output_text", None) or "No response generated."
-    print(f"AI: \n{output_text}")
+    print(f"AI: \n{response.output_text}")
 
 
 if __name__ == '__main__':
