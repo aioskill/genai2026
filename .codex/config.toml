@@ -1,6 +1,2 @@
   [mcp_servers.pycharm]
-    command = "/snap/pycharm-community/650/bin/pycharm"
-    args = ["stdioMcpServer"]
-
-    [mcp_servers.pycharm.env]
-      IJ_MCP_SERVER_PORT = "64462"
+    url = "http://127.0.0.1:64462/stream"

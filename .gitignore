@@ -224,3 +224,5 @@ __marimo__/
 /myprojects/
 *.pickle
 /transformers/
+/tmp/
+/.codex/
