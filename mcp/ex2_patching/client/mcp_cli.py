@@ -23,7 +23,8 @@ load_dotenv()
 
 console = Console()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CLI_LOG_PATH = PROJECT_ROOT / "logs" / "cli.log"
+TMP_PATH = Path(os.environ['TMP_DIR'])
+CLI_LOG_PATH = TMP_PATH / "logs" / "cli.log"
 log = logging.getLogger("sre_cli")
 DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 DEFAULT_CONFIG = str(PROJECT_ROOT / "server" / "config.yaml")
@@ -524,7 +525,7 @@ async def interactive(
     )
 
     prompt = PromptSession(
-        history=FileHistory(str(PROJECT_ROOT / ".mcp_prompt_history"))
+        history=FileHistory(str(TMP_PATH / ".mcp_prompt_history"))
     )
     while True:
         try:
