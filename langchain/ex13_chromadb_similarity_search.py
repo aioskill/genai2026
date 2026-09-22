@@ -17,6 +17,7 @@ vector_store = Chroma(
     embedding_function=embeddings,
     persist_directory=CHROMA_PATH,
     collection_metadata={"hnsw:space": "cosine"},
+    create_collection_if_not_exists=True,
 )
 
 # Add documents

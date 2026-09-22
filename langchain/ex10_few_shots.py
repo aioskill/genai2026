@@ -70,7 +70,7 @@ examples = [
 ]
 
 # Setup the individual example template
-example_prompt = PromptTemplate(
+prompt_template = PromptTemplate(
     input_variables=["question", "answer"],
     template="Neo: {question}\nMorpheus: {answer}"
 )
@@ -89,7 +89,7 @@ suffix = "Neo: {question}\nMorpheus: "
 # Construct the FewShotPromptTemplate
 few_shot_prompt = FewShotPromptTemplate(
     examples=examples,
-    example_prompt=example_prompt,
+    example_prompt=prompt_template,
     prefix=prefix,
     suffix=suffix,
     input_variables=["question"],

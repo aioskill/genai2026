@@ -35,6 +35,6 @@ if response.tool_calls:
 
 # Token Usage Metadata
 if response.usage_metadata:
-    print("Prompt Tokens:", response.usage_metadata["input_tokens"])
+    print("Input Tokens:", response.usage_metadata["input_tokens"])
     print("Completion Tokens:", response.usage_metadata["output_tokens"])
 print("Finish Reason:", response.response_metadata.get("finish_reason"))

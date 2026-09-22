@@ -12,9 +12,9 @@ load_dotenv()
 OPENAI_MODEL = os.environ["OPENAI_MODEL"]
 
 prompt = ChatPromptTemplate.from_template(
-    "Explain why open api have removed support "
+    "Explain why openai have removed support "
     "for parameters such as temperature, top_p, top_f, presence_penalty, frequency_penalty "
-    "from gpt-5.6-luna model.")
+    "from gpt-6-astra model.")
 model = ChatOpenAI(model=OPENAI_MODEL, max_tokens=500)
 
 # Chain piping into StrOutputParser

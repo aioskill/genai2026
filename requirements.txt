@@ -76,3 +76,6 @@ duckdb==1.5.5
 
 # code formatting
 flake8==7.3.0
+
+# HuggingFaceBgeEmbeddings
+sentence_transformers

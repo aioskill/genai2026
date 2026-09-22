@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Define target schema
+# Define target schema in pydantic class
 class MovieReview(BaseModel):
     sentiment: str = Field(description="Positive, Negative, or Neutral")
     summary: str = Field(description="One sentence summary of the review")
@@ -29,5 +29,9 @@ model = ChatOpenAI(model=os.environ["OPENAI_MODEL"])
 # Chain Execution via LCEL
 chain = prompt | model | parser
 
+print("=" * 100)
+
 response = chain.invoke({"review": "The visual effects were stunning, but the plot fell completely flat."})
-print(response)  # Outputs a dictionary matching MovieReview schema
+print("Review analysis (dict): ",response)
+mr = MovieReview.model_validate(response)# Outputs a dictionary matching MovieReview schema
+print("Movie review instance: ", mr)

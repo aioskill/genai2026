@@ -17,7 +17,6 @@ prints the rendered prompt, and sends that same prompt to OpenAI. Syntax and whi
 
 """
 
-import argparse
 import os
 import tempfile
 
@@ -82,7 +81,7 @@ def create_prompt() -> FewShotPromptTemplate:
         collection_name=COLLECTION_NAME,
         persist_directory=CHROMA_PATH,
         embedding_function=embeddings,
-        create_collection_if_not_exists=False,
+        create_collection_if_not_exists=True,
     )
     selector = SemanticSimilarityExampleSelector(
         vectorstore=vectorstore,
@@ -90,7 +89,7 @@ def create_prompt() -> FewShotPromptTemplate:
         input_keys=["question"],
     )
 
-    example_prompt = PromptTemplate(
+    prompt_template = PromptTemplate(
         input_variables=["question", "answer"],
         template="Neo: {question}\nMorpheus: {answer}",
     )
@@ -101,7 +100,7 @@ def create_prompt() -> FewShotPromptTemplate:
     )
     return FewShotPromptTemplate(
         example_selector=selector,
-        example_prompt=example_prompt,
+        example_prompt=prompt_template,
         prefix=prefix,
         suffix="Neo: {question}\nMorpheus: ",
         input_variables=["question"],
@@ -128,5 +127,5 @@ def serve(user_question: str) -> None:
 
 
 if __name__ == "__main__":
-    # build_database()
+    build_database()
     serve("How do I know I can beat them?")
