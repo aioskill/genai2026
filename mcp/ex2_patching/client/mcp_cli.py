@@ -384,6 +384,7 @@ class InteractiveMcpClient:
                 return answer
             iterations += 1
             if iterations > 20:
+                self.previous_response_id = None
                 return (
                     "I could not finish this request after several tool attempts. "
                     "The last tool error was returned to the conversation; "
@@ -452,16 +453,26 @@ class InteractiveMcpClient:
             if direct_error is not None and direct_error["code"] not in {
                 "PATH_OUTSIDE_SANDBOX"
             }:
+                # The response contains an unresolved function call. Do not
+                # reuse it on the next user request after returning early.
+                self.previous_response_id = None
                 return f"I couldn’t complete that request because {direct_error['message']}"
 
-            response = self.openai_client.responses.create(
-                model=self.model,
-                instructions=self.system_prompt,
-                previous_response_id=self.previous_response_id,
-                input=outputs,
-                tools=openai_tools(self.tools),
-                store=True,
-            )
+            try:
+                response = self.openai_client.responses.create(
+                    model=self.model,
+                    instructions=self.system_prompt,
+                    previous_response_id=self.previous_response_id,
+                    input=outputs,
+                    tools=openai_tools(self.tools),
+                    store=True,
+                )
+            except Exception:
+                # The tool call has no usable output from the model's point
+                # of view. Starting the next request from this response ID
+                # would make the API reject it as an unresolved call.
+                self.previous_response_id = None
+                raise
 
 
 async def interactive(
