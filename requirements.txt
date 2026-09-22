@@ -3,9 +3,10 @@ langchain-openai==1.4.1
 langchain-deepseek==1.1.0
 langchain-ollama==1.1.0
 langchain-chroma==1.1.0
-langchain-anthropic
+langchain-anthropic==1.5.4
+langchain_mcp_adapters
 # load env variables containing api keys
-python-dotenv
+python-dotenv==1.2.3
 
 openai==2.52.0
 
@@ -32,6 +33,10 @@ rich==15.0.0
 # Chroma DB is an open-source (apache 2.0) vector store used
 # for storing and retrieving vector embeddings.
 chromadb==1.5.9
+
+# Qdrant vector database client. The tutorial in quadrant/ uses its local
+# in-memory mode by default and can also connect to a Qdrant server.
+qdrant-client>=1.14.2,<2.0.0
 
 # Automated testing that finds & fixes AI risk in development
 # Test driven development
