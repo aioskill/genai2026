@@ -3,7 +3,7 @@ services:
   chroma:
     image: chromadb/chroma
     ports:
-      - "8000:8000"
+      - "8436:8000"
     environment:
       - ALLOW_RESET=TRUE
     volumes:
@@ -17,6 +17,38 @@ services:
     volumes:
       - qdrant_storage:/qdrant/storage
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_storage:/data
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_storage:/usr/share/opensearch/data
+
+  postgresql:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vectors}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql_storage:/var/lib/postgresql/data
+
 volumes:
   chroma_storage:
   qdrant_storage:
+  redis_storage:
+  opensearch_storage:
+  postgresql_storage:
