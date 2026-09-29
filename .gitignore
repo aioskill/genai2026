@@ -227,3 +227,5 @@ __marimo__/
 /tmp/
 /.codex/
 /archive/
+*.jpg
+*.pdf
