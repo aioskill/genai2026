@@ -79,3 +79,6 @@ flake8==7.3.0
 
 # HuggingFaceBgeEmbeddings
 sentence_transformers
+
+# Read excel files.
+openpyxl==3.1.5
