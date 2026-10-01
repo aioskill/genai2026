@@ -58,12 +58,6 @@ uvicorn
 
 # vector search
 faiss-cpu==1.15.0
-transformers
-huggingface_hub
-datasets==5.0.1
-evaluate==0.4.6
-accelerate==1.15.0
-
 
 # machine learning
 pandas==3.0.5
@@ -78,7 +72,13 @@ duckdb==1.5.5
 flake8==7.3.0
 
 # HuggingFaceBgeEmbeddings
-sentence_transformers
+# sentence_transformers==5.7.0
+# transformers
+# huggingface_hub
+# datasets==5.0.1
+# evaluate==0.4.6
+# accelerate==1.15.0
+
 
 # Read excel files.
 openpyxl==3.1.5
