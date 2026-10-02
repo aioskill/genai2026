@@ -9,6 +9,7 @@ langchain_mcp_adapters
 python-dotenv==1.2.3
 
 openai==2.52.0
+anthropic==0.43.1
 
 # required for doc chunking
 langchain-text-splitters==1.1.2
@@ -81,4 +82,3 @@ flake8==7.3.0
 
 
 # Read excel files.
-openpyxl==3.1.5

@@ -229,3 +229,5 @@ __marimo__/
 /archive/
 *.jpg
 *.pdf
+cisco.db*
+cisco/
