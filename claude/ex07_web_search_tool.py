@@ -16,9 +16,8 @@ def main() -> None:
         max_tokens=512,
         tools=[
             {
-                "type": "computer_use",
+                "type": "web_search_20250305",
                 "name": "web_search",
-                "description": "Search the web for current information",
             }
         ],
         messages=[
@@ -39,24 +38,32 @@ def main() -> None:
     if first_text:
         print("Funny news: ", first_text)
 
-    # Follow-up question
+    # Follow-up question using the conversation
+    conversation_messages = [
+        {
+            "role": "user",
+            "content": "What was a funny news story from today in USA?",
+        },
+        {
+            "role": "assistant",
+            "content": response.content,
+        },
+        {
+            "role": "user",
+            "content": "Why do you find it funny?",
+        },
+    ]
+
     follow_up_response = client.messages.create(
         model=model,
         max_tokens=256,
-        messages=[
+        tools=[
             {
-                "role": "user",
-                "content": "What was a funny news story from today in India?",
-            },
-            {
-                "role": "assistant",
-                "content": response.content,
-            },
-            {
-                "role": "user",
-                "content": "Why do you find it funny?",
-            },
+                "type": "web_search_20250305",
+                "name": "web_search",
+            }
         ],
+        messages=conversation_messages,
     )
 
     follow_up_text = None

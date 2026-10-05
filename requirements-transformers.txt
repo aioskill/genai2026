@@ -1,0 +1,9 @@
+
+
+# HuggingFaceBgeEmbeddings
+sentence_transformers==5.7.0
+# transformers
+huggingface_hub
+datasets==5.0.1
+evaluate==0.4.6
+accelerate==1.15.0

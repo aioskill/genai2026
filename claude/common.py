@@ -10,7 +10,7 @@ def build_client() -> Anthropic:
     """Build and return an Anthropic client."""
     load_dotenv()
     api_key = os.getenv("ANTHROPIC_API_KEY")
-    return Anthropic(api_key = api_key)
+    return Anthropic(api_key=api_key)
 
 
 def resolve_model() -> str:
@@ -50,4 +50,7 @@ class Conversation(BaseModel):
 
     def to_api_format(self) -> list[dict]:
         """Convert messages to the format expected by the Anthropic API."""
-        return [{"role": msg.role, "content": msg.content} for msg in self.messages]
+        return [
+            {"role": msg.role, "content": msg.content}
+            for msg in self.messages
+        ]

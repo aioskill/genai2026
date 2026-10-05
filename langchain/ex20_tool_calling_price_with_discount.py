@@ -75,7 +75,11 @@ def apply_discount(price: float, discount_tier: str) -> float:
 
 @traceable(name="LangChain Agent Loop")
 def run_agent(question: str):
-    tools = [find_product_match, get_product_price, apply_discount, find_discount_tier_match]
+    tools = [find_product_match,
+             find_discount_tier_match,
+             get_product_price,
+             apply_discount,
+             ]
     tools_dict = {t.name: t for t in tools}
 
     llm = ChatOpenAI(model=os.environ["OPENAI_MODEL"],

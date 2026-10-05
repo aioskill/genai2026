@@ -15,7 +15,10 @@ def run_chat_session() -> None:
 
     print("Initializing AI Support Session...")
 
-    system_message = "You are a helpful, concise IT support assistant."
+    system_message = (
+        "You are a helpful, concise IT support assistant. "
+        "Produce text in plain text; no markdown."
+    )
     conversation = Conversation()
 
     # Initial user message

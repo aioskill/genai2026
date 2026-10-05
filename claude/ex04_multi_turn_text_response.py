@@ -24,7 +24,7 @@ def main() -> None:
     first_response = client.messages.create(
         model=model,
         max_tokens=256,
-        temperature=1.2,
+        temperature=1,
         messages=conversation.to_api_format(),
     )
 
@@ -46,7 +46,7 @@ def main() -> None:
     second_response = client.messages.create(
         model=model,
         max_tokens=256,
-        temperature=1.2,
+        temperature=1,
         messages=conversation.to_api_format(),
     )
 

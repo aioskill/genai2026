@@ -30,8 +30,8 @@ class LLMTraceHandler(BaseCallbackHandler):
 # Define custom tool
 
 @tool
-def multiply(a: Union[int, float], b: int) -> float:
-    """Multiply two integers together."""
+def multiply(a: Union[int, float], b: int) -> Union[float, int]:
+    """Multiply two numbers together."""
     return a * b
 
 
@@ -50,7 +50,8 @@ model = ChatOpenAI(
 
 # Create ReAct Agent executor
 agent_executor = create_agent(
-    model, tools,
+    model,
+    tools,
     system_prompt=(
         "DO NOT do the calculation using LLM for existing tools."
         " Rely on the output from tool calling."
@@ -60,6 +61,7 @@ agent_executor = create_agent(
 # Invoke Agent
 events = agent_executor.invoke({"messages": [
     ("user", "What is 14.5 multiplied by 22?"),
-    ("user", "Add 100 to the previous response")
+    ("user", "Add 100 to the previous response"),
+    ("user", "Divide the response by 10")
 ]})
-print(events["messages"][-1].content)
+print("AI response: ", events["messages"][-1].content)

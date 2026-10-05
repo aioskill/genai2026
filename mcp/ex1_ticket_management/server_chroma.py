@@ -118,6 +118,18 @@ def delete_resolution(doc_id: str) -> dict:
     return {"status": "deleted", "doc_id": doc_id}
 
 
+@mcp.tool()
+def clear_all_resolutions() -> dict:
+    """Deletes every resolution before the demo bootstrap reseeds the store."""
+    resolution_ids = collection.get().get("ids", [])
+    if resolution_ids:
+        collection.delete(ids=resolution_ids)
+    return {
+        "status": "cleared",
+        "deleted_resolutions": len(resolution_ids),
+    }
+
+
 if __name__ == "__main__":
     print(f"ChromaDB initialized at: {CHROMA_PATH}")
     print("Starting Server 2 (ChromaDB Resolutions) on port 8002...")

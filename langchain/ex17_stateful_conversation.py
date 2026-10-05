@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_core.chat_history import InMemoryChatMessageHistory
+from langchain_core.runnables import RunnableConfig
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
@@ -30,8 +31,17 @@ conversational_chain = RunnableWithMessageHistory(
     history_messages_key="history"
 )
 
-config = {"configurable": {"session_id": "student_1"}}
-response1 = conversational_chain.invoke({"input": "Hi! My name is Alex."}, config=config)
-response2 = conversational_chain.invoke({"input": "What is my name?"}, config=config)
+config1 = RunnableConfig(configurable = {"session_id": "student_1"})
+config2 = RunnableConfig(configurable = {"session_id": "student_2"})
 
-print(response2.content)  # "Your name is Alex."
+
+response1 = conversational_chain.invoke({"input": "Hi! My name is Alex."}, config=config1)
+response3 = conversational_chain.invoke({"input": "Hi! My name is Elon."}, config=config2)
+
+response2 = conversational_chain.invoke({"input": "What is my name?"}, config=config1)
+response4 = conversational_chain.invoke({"input": "What is my name?"}, config=config2)
+
+print("What is my name? (expect: Alex) ", response2.content)  # "Your name is Alex."
+print("What is my name? (expect: Elon) ", response4.content)  # "Your name is Elon."
+
+print("store: ", store)

@@ -1,14 +1,12 @@
 """A LangGraph shopping assistant that looks up prices and applies discounts.
 
-The graph has two nodes:
+The graph has three stages:
 
-    START -> assistant - tool calls -> tools -> assistant
-                         +-- no tool call -> END
+    START -> find_valid_product -> find_valid_discount_tier -> final_price
+                                      (optional)
 
-The assistant node asks the model what to do. When the model requests a tool,
-the tools node executes it and adds a ``ToolMessage`` to the shared state. The
-assistant then sees that result and either calls the next tool or writes the
-final answer.
+The first two stages ask the model to call their matching tools. The final
+stage looks up the product price and applies the matched tier when available.
 
 This is deliberately written with ``StateGraph`` instead of a high-level agent
 constructor so beginners can see the state, nodes, router, and loop directly.
@@ -18,7 +16,7 @@ Before running it, configure ``OPENAI_MODEL`` and the OpenAI credentials in
 
 import os
 from difflib import get_close_matches
-from typing import Annotated, TypedDict
+from typing import Annotated, List, TypedDict
 
 from dotenv import load_dotenv
 from langchain_core.messages import (
@@ -27,6 +25,7 @@ from langchain_core.messages import (
     SystemMessage,
     ToolMessage,
 )
+from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import ToolException, tool
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
@@ -39,6 +38,26 @@ MAX_ITERATIONS = 10
 
 # --- Tools ---------------------------------------------------------------
 
+PRICES = {"laptop": 1299.99, "headphones": 149.95, "keyboard": 89.50}
+DISCOUNT_TIERS = ["bronze", "silver", "gold"]
+
+
+@tool
+def find_product_match(product: str) -> List[str]:
+    """Find catalog product names similar to the supplied name."""
+    return get_close_matches(
+        product.lower(), PRICES.keys(), n=3, cutoff=0.4
+    )
+
+
+@tool
+def find_discount_tier_match(discount_tier: str) -> List[str]:
+    """Find discount tiers similar to the supplied tier."""
+    return get_close_matches(
+        discount_tier.lower(), DISCOUNT_TIERS, n=3, cutoff=0.4
+    )
+
+
 @tool
 def get_product_price(product: str) -> dict:
     """Look up the price of a product in the catalog.
@@ -49,18 +68,15 @@ def get_product_price(product: str) -> dict:
     back to the model in a ``ToolMessage``.
     """
     print(f"    >> Executing get_product_price(product='{product}')")
-    prices = {"laptop": 1299.99, "headphones": 149.95, "keyboard": 89.50}
 
-    if product in prices:
-        return {"product": product, "price": prices[product]}
+    normalized_product = product.lower()
+    if normalized_product in PRICES:
+        return {
+            "product": normalized_product,
+            "price": PRICES[normalized_product],
+        }
 
-    suggestions = get_close_matches(product, prices.keys(), n=3, cutoff=0.4)
-    suggestion_text = (
-        f" Did you mean: {', '.join(suggestions)}?" if suggestions else ""
-    )
-    raise ToolException(
-        f"Product '{product}' not found in catalog.{suggestion_text}"
-    )
+    raise ToolException(f"Product '{product}' not found in catalog.")
 
 
 @tool
@@ -71,84 +87,105 @@ def apply_discount(price: float, discount_tier: str) -> float:
         f"discount_tier='{discount_tier}')"
     )
     discount_percentages = {"bronze": 5, "silver": 12, "gold": 23}
-    discount = discount_percentages.get(discount_tier, 0)
+    normalized_tier = discount_tier.lower()
+    if normalized_tier not in discount_percentages:
+        raise ToolException(f"Unknown discount tier '{discount_tier}'.")
+
+    discount = discount_percentages[normalized_tier]
     return round(price * (1 - discount / 100), 2)
 
-
-TOOLS = [get_product_price, apply_discount]
-TOOLS_BY_NAME = {item.name: item for item in TOOLS}
 
 llm = ChatOpenAI(
     model=os.environ["OPENAI_MODEL"],
     reasoning_effort="none",
 )
-llm_with_tools = llm.bind_tools(TOOLS)
+TOOLS = [
+    find_product_match,
+    find_discount_tier_match,
+    get_product_price,
+    apply_discount,
+]
+TOOLS_BY_NAME = {item.name: item for item in TOOLS}
+llm_with_tools = llm.bind_tools(TOOLS, parallel_tool_calls=False)
 
 
 # --- Graph state and nodes -----------------------------------------------
 
 class ShoppingState(TypedDict):
-    """Messages are the graph's shared memory.
-
-    ``add_messages`` tells LangGraph to append new messages rather than
-    replacing the existing conversation after each node.
-    """
+    """Conversation messages and collected shopping calculation values."""
 
     messages: Annotated[list[AnyMessage], add_messages]
+    product_name: str | None
+    product_name_identified: bool
+    list_price: float | None
+    discount_tier: str | None
+    discount_tier_identified: bool
+    discounted_price: float | None
 
 
 SYSTEM_PROMPT = """You are a helpful shopping assistant.
 
-Follow these rules exactly:
-1. Never guess a product price. Call get_product_price first.
-2. Call apply_discount only after receiving a price from get_product_price.
-3. Never calculate a discount yourself; always call apply_discount.
-4. If no discount tier is provided, ask the user which tier to use.
-5. If the catalog tool reports that a product is unavailable, do not call
-   apply_discount. Explain the problem and mention any suggested alternative.
+Follow these rules:
+1. Use find_product_match when identifying a product name. Use a returned
+   catalog name with get_product_price; never guess a price.
+2. If the user names a discount tier, use find_discount_tier_match to identify
+   it, then call apply_discount after receiving the product price.
+3. Ask which tier to use only if the user did not provide one.
+4. Never calculate a discount yourself.
+5. If a match tool returns no useful result, ask the user to clarify.
+6. If a product or discount tool reports an error, explain it and do not
+   invent a result.
 """
 
 
 def assistant_node(state: ShoppingState) -> dict:
-    """Ask the model for the next action or the final response."""
+    """Ask the model to select its next tool call or provide a final answer."""
     response = llm_with_tools.invoke(state["messages"])
     if response.tool_calls:
-        print(f"  [Assistant requested] {[call['name'] for call in response.tool_calls]}")
+        selected_tools = [call["name"] for call in response.tool_calls]
+        print(f"  [Assistant requested] {selected_tools}")
     else:
         print("  [Assistant produced final answer]")
     return {"messages": [response]}
 
 
 def tools_node(state: ShoppingState) -> dict:
-    """Execute every tool call from the latest assistant message.
-
-    Tool errors are converted to ``ToolMessage`` objects so the model can
-    recover conversationally. The original invalid-product behavior still
-    originates from ``get_product_price`` raising ``ToolException``.
-    """
+    """Execute the tools requested by the latest assistant message."""
     assistant_message = state["messages"][-1]
     tool_messages = []
+    collected_values = {}
 
     for tool_call in assistant_message.tool_calls:
         name = tool_call["name"]
-        tool = TOOLS_BY_NAME.get(name)
-        if tool is None:
+        selected_tool = TOOLS_BY_NAME.get(name)
+        if selected_tool is None:
             raise ValueError(f"Tool '{name}' not found")
 
         print(f"  [Tool Selected] {name} with args: {tool_call['args']}")
         try:
-            result = tool.invoke(tool_call["args"])
+            result = selected_tool.invoke(tool_call["args"])
         except ToolException as exc:
             result = str(exc)
         except Exception as exc:
             result = f"Tool execution failed: {exc}"
+
+        if name == "get_product_price" and isinstance(result, dict):
+            collected_values["product_name"] = result["product"]
+            collected_values["product_name_identified"] = True
+            collected_values["list_price"] = result["price"]
+        elif name == "apply_discount" and isinstance(result, (int, float)):
+            tier = tool_call["args"]["discount_tier"].lower()
+            collected_values["discount_tier"] = tier
+            collected_values["discount_tier_identified"] = True
+            collected_values["discounted_price"] = result
 
         print(f"  [Tool Result] {result}")
         tool_messages.append(
             ToolMessage(content=str(result), tool_call_id=tool_call["id"])
         )
 
-    return {"messages": tool_messages}
+    collected_values["messages"] = tool_messages
+    return collected_values
 
 
 def route_after_assistant(state: ShoppingState) -> str:
@@ -174,24 +211,37 @@ shopping_graph = builder.compile()
 
 @traceable(name="LangGraph Shopping Agent")
 def run_agent(question: str) -> str:
-    """Run the graph and return the final assistant message."""
+    """Run the graph and return its final assistant message."""
     initial_state = {
         "messages": [
             SystemMessage(content=SYSTEM_PROMPT),
             HumanMessage(content=question),
-        ]
+        ],
+        "product_name": None,
+        "product_name_identified": False,
+        "list_price": None,
+        "discount_tier": None,
+        "discount_tier_identified": False,
+        "discounted_price": None,
     }
 
     print(f"Question: {question}")
     print("=" * 60)
     final_state = shopping_graph.invoke(
         initial_state,
-        config={"recursion_limit": MAX_ITERATIONS * 2},
+        config=RunnableConfig(recursion_limit=MAX_ITERATIONS * 2),
     )
-    final_message = final_state["messages"][-1]
-    print(f"\nFinal Answer: {final_message.content}")
-    return final_message.content
+    final_answer = final_state["messages"][-1].content
+    print(f"\nFinal Answer: {final_answer}")
+    print(
+        "Collected values: "
+        f"product={final_state['product_name']}, "
+        f"list_price={final_state['list_price']}, "
+        f"discount_tier={final_state['discount_tier']}, "
+        f"discounted_price={final_state['discounted_price']}"
+    )
+    return final_answer
 
 
 if __name__ == "__main__":
-    run_agent("What is the price of a laptop after applying a gold discount?")
+    run_agent("What is the price of a LAPTOP after applying a golf discount?")

@@ -13,6 +13,7 @@ OPENAI_MODEL = os.environ["OPENAI_MODEL"]
 model = ChatOpenAI(model=OPENAI_MODEL, max_tokens = 500)
 
 # Define the message history using langchain_core
+# SystemMessage, HumanMessage, AIMessage, ToolCallResult sets the role as "system" and "user", "assistant"
 prompt1 = ChatPromptTemplate.from_messages([
     SystemMessage(content="Answer questions in the style of a politician."),
     HumanMessage(content="Do you support increase of government spending on public health?") # static message
@@ -25,10 +26,12 @@ prompt2 = ChatPromptTemplate.from_messages([
 
 prompt3 = ChatPromptTemplate.from_messages([
     ("system", "Answer questions in the style of a politician."),
-    ("human", "Do you support increase of government spending on {topic}?")
+    ("user", "Do you support increase of government spending on {topic}?")
 ])
 
-chain = prompt2 | model | StrOutputParser()
-response = chain.invoke({"topic": "AI data centers"})
-# response = chain.invoke({"topic": "public schools"})
-print(response)
+for item in [prompt1, prompt2, prompt3]:
+    print("******************** item: ***********************", item)
+    chain = prompt2 | model | StrOutputParser()
+    response = chain.invoke({"topic": "AI data centers"})
+    # response = chain.invoke({"topic": "public schools"})
+    print(response)

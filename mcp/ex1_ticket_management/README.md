@@ -11,7 +11,7 @@ Instead of a monolithic server, this lab separates concerns into three distinct 
 | **Port:** `8001` | **Port:** `8002` | **Port:** `8003` |
 | **Domain:** Live Support & Ticket Lifecycle | **Domain:** Vector Search & Knowledge Base | **Domain:** Code & Configuration Repair |
 | **Storage:** SQLite (`tickets.db`) | **Storage:** Persistent Vector Store | **Storage:** Local Source Directory (`/src`) |
-| **Tools:**<br>• `list_open_tickets`<br>• `get_ticket_details` | **Tools:**<br>• `search_resolutions` | **Tools:**<br>• `apply_code_patch` |
+| **Tools:**<br>• `list_open_tickets`<br>• `get_ticket_details`<br>• `save_patch_details` | **Tools:**<br>• `search_resolutions` | **Tools:**<br>• `list_source_files(application_name, host_name="localhost")`<br>• `get_current_file(application_name, filename, host_name="localhost")`<br>• `apply_file_changes` |
 | **Resources:**<br>*(None)* | **Resources:**<br>• `chroma://resolutions/latest` | **Resources:**<br>*(None)* |
 | **Prompts:**<br>• `incident_rca(ticket_id)` | **Prompts:**<br>*(None)* | **Prompts:**<br>*(None)* |
 | **Security Boundary:**<br>Standard Read Queries | **Security Boundary:**<br>Standard Vector Lookups | **Security Boundary:**<br>🚨 **Human-in-the-Loop (HITL)** |
@@ -37,7 +37,11 @@ Instead of a monolithic server, this lab separates concerns into three distinct 
 * **Role:** Modifies local code/config files to remediate bugs.
 * **Storage:** Source Workspace (`<tempdir>/mcp_ex1/src/`)
 * **Exposed Primitives:**
-  * `apply_code_patch` *(Tool)* — Overwrites source/configuration files. **Triggers HITL security check.**
+  * `list_source_files(application_name, host_name="localhost")` *(Tool)* —
+    Lists source paths for one application on one host.
+  * `get_current_file(application_name, filename, host_name="localhost")`
+    *(Tool)* — Returns one file from that application and host.
+  * `apply_file_changes` *(Tool)* — Applies a multi-file create/update/delete set. **Triggers HITL security check.**
 
 ---
 
@@ -72,7 +76,7 @@ The client now acts as the central orchestrator:
             ├──────────────────────────┼──────────────────────────┤
             │                          │                          │
             │                          │                          │ 4. TOOL:
-            │                          │                          │    apply_code_patch()
+            │                          │                          │    apply_file_changes()
             │                          │                          │    └── 🚨 HITL GATE
             │                          │                          │        (Client Intercept)
             ├──────────────────────────┼──────────────────────────┤
@@ -96,28 +100,56 @@ The client now acts as the central orchestrator: it discovers open tickets, insp
 
 ### Human-In-The-Loop (HITL) Security Interceptor
 
-Write operations (`apply_code_patch`) can produce irreversible side effects. The client intercepts execution requests
+Write operations (`apply_file_changes`) can produce irreversible side effects. The client intercepts execution requests
 for sensitive tools and pauses runtime execution, requiring interactive approval before passing the request over the SSE stream:
 
 🚨 HUMAN-IN-THE-LOOP SECURITY GATE INITIATED
 Action: Modify production file on Patch_Executor
-Target File: db_config.json
-Proposed Content:
-{ "connection_timeout_ms": 5000 }
+Proposed File Changes:
+[{"application_name": "billing", "host_name": "localhost",
+  "filename": "config.py", "operation": "update", "content": "..."}]
 Authorize this system patch? (y/N):
 
 
-Open three terminals
-python server_sql.py
-python server_chroma.py
-python server_patch.py
+Start all three MCP servers in the foreground. Keep this terminal open; press
+Ctrl-C to stop the script and all three servers:
+
+```shell
+./servers.sh start
+```
+
+You can also stop them from another terminal:
+
+```shell
+./servers.sh stop
+```
+
+Use `./servers.sh restart` to restart all three. Logs and PID files are stored
+under `<tempdir>/mcp_ex1/run/`.
+
+Restart all three servers after changing their MCP tools so bootstrap can
+discover the reset tools before it clears and reseeds records.
 
 Run the client orchestration
+The client loads `OPENAI_API_KEY` from the repository `.env` file. The patch
+proposal uses `gpt-4o-mini` by default; set `MCP_LLM_MODEL` to choose another
+compatible OpenAI chat model.
+
+```shell
 python client.py --disable-hitl
+```
 
 To bypass the approval prompt in automation, use `--disable-hitl` or set `MCP_DISABLE_HITL=1`.
 
-When you run python client.py, the following sequence takes place:
+When you run `python client.py`, bootstrap clears SQL ticket and patch-history
+records, Chroma resolution records, and the disposable
+`<tempdir>/mcp_ex1/src` workspace, then seeds an API rolling-window rate-limit
+incident, a matching historical resolution, and a small multi-module source
+tree for the `api-gateway` and `rate-limiter` applications on `localhost`.
+Tickets can list multiple application/host targets. The client uses those
+targets to discover and fetch current source context; its remediation prompt
+does not branch on this example's error code or filenames. The following
+sequence takes place:
 
 1. Ticket discovery: Calls `list_open_tickets()` on Server 1 to find the active incidents.
 
@@ -125,18 +157,38 @@ When you run python client.py, the following sequence takes place:
 
 3. Knowledge lookup: Calls `search_resolutions()` and reads `chroma://resolutions/latest` on Server 2.
 
-4. Remediation: The client sends `apply_code_patch` to Server 3 when a vector match exists, otherwise it updates the ticket to `REQUIRE_HUMAN_FIX`.
+4. Remediation: For every application listed on the ticket, the client lists
+   files through Server 3 and fetches each current file through
+   `get_current_file(application_name, filename, host_name)`. It combines their
+   contents with previous patches from SQL and matching resolution notes from
+   ChromaDB in a generic OpenAI request. It applies the
+   validated `PatchProposal`, which can create, update, or delete multiple
+   files. The change set is saved in `Ticket.patch_details`; it is not a
+   property of the incident's identity or initial ticket details.
 
-5. RCA summary: Calls `incident_rca(ticket_id)` on Server 1 after remediation or escalation to generate the closing report.
+5. RCA summary: Calls `incident_rca(ticket_id)` on Server 1 after a patch is
+   successfully applied and saved, generates the RCA with the LLM, then stores
+   the report on the same ticket.
 
-6. Verification: Inspect the generated patch target file to confirm execution:
+The ticket row stores patch details (a list of file operations, each scoped to
+an application and host), patch status
+and any error message, plus the generated RCA report. `patch_status: SUCCESS`
+means the change set was applied and saved, not that runtime behavior passed
+verification. After a successful patch and saved RCA, the ticket moves to
+`PATCHED_PENDING_VERIFICATION`. Applied file operations also remain in the
+`patch_history` audit table.
+
+6. Verification: Inspect each file listed in the ticket's
+   `patch_details.changes` to confirm execution. File operations include the
+   application, host, filename, action, and complete content for
+   create/update.
 
 ```shell
 # Linux/macOS:
-cat $TMPDIR/mcp_ex1/src/db_config.json
+cat $TMPDIR/mcp_ex1/src/localhost/rate-limiter/api/rate_limit.py
 
 # Windows PowerShell:
-Get-Content $env:TEMP\mcp_ex1\src\db_config.json
+Get-Content $env:TEMP\mcp_ex1\src\localhost\rate-limiter\api\rate_limit.py
 ```
 
 ```
@@ -146,7 +198,13 @@ Get-Content $env:TEMP\mcp_ex1\src\db_config.json
 ├── chroma/
 │   └── (chromadb sqlite & index files)
 └── src/
-    └── db_config.json
+    └── localhost/
+        ├── api-gateway/
+        │   └── api/
+        │       └── gateway.py
+        └── rate-limiter/
+            └── api/
+                └── rate_limit.py
 
 ```
 

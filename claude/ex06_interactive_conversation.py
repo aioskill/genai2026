@@ -50,6 +50,11 @@ def main(model: str, system_prompt: str, temperature: float) -> None:
     """Run an interactive conversation with Claude."""
     client = build_client()
 
+    # Cap temperature at 1.0
+    if temperature > 1.0:
+        temperature = 1.0
+        click.echo("Note: Temperature capped at 1.0\n")
+
     if not model:
         model = resolve_model()
 

@@ -231,3 +231,5 @@ __marimo__/
 *.pdf
 cisco.db*
 cisco/
+/.claude/
+/.codex/

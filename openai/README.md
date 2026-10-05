@@ -23,7 +23,7 @@ Optional model override:
 export OPENAI_MODEL="gpt-5.4-mini"
 ```
 
-The scripts default to `gpt-5.4-mini` if `OPENAI_MODEL` is not set.
+The scripts default to `gpt-5.4-mini` if `model_name` is not set.
 
 ## Current Model Catalog
 

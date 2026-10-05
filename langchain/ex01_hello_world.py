@@ -3,16 +3,19 @@ import os
 from langchain_openai import ChatOpenAI
 # from langchain_deepseek import ChatDeepSeek
 # from langchain_ollama import ChatOllama
+from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 
 load_dotenv()
 
-OPENAI_MODEL = os.environ["OPENAI_MODEL"]
+model_name = os.environ["OPENAI_MODEL"]
+# model_name = os.environ["ANTHROPIC_MODEL"]
 
 prompt = ChatPromptTemplate.from_template(
     "Explain: {text}. Show raw texts in bullets. Keep output text short")
-model = ChatOpenAI(model=OPENAI_MODEL, max_tokens = 1024)
+model = ChatOpenAI(model=model_name, max_tokens = 1024)
+#model = ChatOpenAI(model=model_name, max_tokens = 1024)
 
 
 resolved_prompt = prompt.format_messages(text = "langchain")
