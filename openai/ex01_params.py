@@ -31,4 +31,4 @@ response = client.responses.create(
     text={"verbosity": "medium", "format": {"type": "text"}},
 )
 
-print(response.output_text)
+print("Response: ", response.output_text)
