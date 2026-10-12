@@ -1,0 +1,11 @@
+# machine learning
+pandas==3.0.5
+# tensorflow==2.21.0
+scikit-learn==1.9.0
+numpy==2.5.1
+matplotlib==3.11.1
+duckdb==1.5.5
+
+
+# Read excel files.
+openpyxl
