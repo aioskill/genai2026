@@ -45,9 +45,6 @@ qdrant-client>=1.14.2,<2.0.0
 # Test driven development
 promptfoo==0.1.4
 
-# linear algebra
-numpy==2.5.1
-
 # Jupyter interactive notebook
 jupyter==1.1.1
 

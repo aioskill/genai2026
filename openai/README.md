@@ -421,6 +421,20 @@ for item in page.data:
 - If the conversation has more than one page of items, continue with `after=page.last_id` until `has_more` is false.
 - Use this when you need to review or replay a stored conversation by ID.
 
+## Prompt Caching
+
+Prompt caching reuses an eligible prompt prefix when later requests send the
+same prefix. Keep shared instructions and reference data stable and place
+request-specific content after them. The first request may populate the cache;
+later requests can report reused input tokens in
+`response.usage.input_tokens_details.cached_tokens`. Caching is automatic for
+eligible prompts, and the minimum cacheable length depends on the model.
+
+Run `python openai/ex18_prompt_caching.py` to send two questions with the same
+catalog context and print the cached input token count for each response. A
+cache hit depends on model eligibility and cache availability, so the first
+request can report zero cached tokens.
+
 ## Deprecated And Legacy Surfaces
 
 The table below separates APIs that are explicitly deprecated from APIs that are still supported but considered legacy for new projects.
@@ -448,6 +462,7 @@ The table below separates APIs that are explicitly deprecated from APIs that are
 - `ex4_multi_turn_text_response.py`
 - `ex5_multi_turn_conversation.py`
 - `ex6_interactive_conversation.py` - interactive CLI conversation using `click`
+- `ex18_prompt_caching.py` - reuse a stable prompt prefix and inspect cached tokens
 
 ## Source Of Truth
 
