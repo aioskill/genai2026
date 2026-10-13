@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-
+import os
 import chromadb
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DATABASE_DIR = PROJECT_ROOT / "tmp" / "bbc_news_chroma_db"
+DEFAULT_DATABASE_DIR = Path(os.environ['TMP_DIR']) / "bbc_news_chroma_db"
 DEFAULT_COLLECTION_NAME = "bbc_news_summary"
 DEFAULT_RESULT_COUNT = 5
 

@@ -5,8 +5,7 @@ Install:
 
 Example:
     export OPENAI_API_KEY="your-api-key"
-    python query_logs.py --db-dir ./chroma_db \
-        --question "What caused the OutOfMemoryError and what should be done?"
+    python3 query_logs.py --question "What caused the OutOfMemoryError and what should be done?"
 """
 
 from __future__ import annotations
