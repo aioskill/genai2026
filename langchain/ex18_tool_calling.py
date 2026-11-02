@@ -6,8 +6,8 @@ from langchain_core.callbacks import BaseCallbackHandler
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from dotenv import load_dotenv
-from typing import Union
-
+from typing import Union, List, Dict
+from pydantic import BaseModel
 load_dotenv()
 
 
@@ -41,6 +41,35 @@ def divide(a: int, b: int) -> float:
     return a / b
 
 
+class Column(BaseModel):
+    name:str
+    type:str
+
+class Table(BaseModel):
+    name:str
+    columns: List[Column]
+
+class Catalog(BaseModel):
+    tables: List[Table]
+
+@tool
+def find_catalog() -> Catalog:
+    """Find accessible data catalog."""
+    return Catalog({})
+
+
+@tool
+def execute_sql(select_statement: str) -> dict:
+    """Multiply two numbers together."""
+    return {'records': []}
+
+@tool
+def get_recent_purchases(user_name: str) -> dict:
+    """Multiply two numbers together."""
+    return {'products': []}
+
+user_prompt = "give top 10 product recommendation based on past purchases. Username: {username}"
+
 tools = [multiply, divide]
 model = ChatOpenAI(
     model=os.environ['OPENAI_MODEL'],
@@ -50,8 +79,8 @@ model = ChatOpenAI(
 
 # Create ReAct Agent executor
 agent_executor = create_agent(
-    model,
-    tools,
+    model = model,
+    tools = tools,
     system_prompt=(
         "DO NOT do the calculation using LLM for existing tools."
         " Rely on the output from tool calling."

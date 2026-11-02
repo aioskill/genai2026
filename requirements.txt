@@ -8,6 +8,7 @@ langchain_mcp_adapters
 # load env variables containing api keys
 python-dotenv==1.2.3
 
+
 openai==2.52.0
 
 # langchain-anthropic contains its owned pinned version

@@ -36,4 +36,4 @@ with client.responses.stream(
         if event.type == "response.output_text.delta":
             print(event.delta, end="", flush=True)
 
-print()
+print("Done")

@@ -8,19 +8,19 @@ All models do not support all model parameters
 """
 
 # OpenAI
-llm_openai = ChatOpenAI(
+model = ChatOpenAI(
     model="gpt-4o-mini",
-    temperature=0.7,
-    top_p=0.9,
+    temperature=1.2,
+    top_p=0.95,
     frequency_penalty=0.5,
     presence_penalty=0.5,
     max_tokens=500,
 )
 
-# llm = ChatAnthropic()
+# model = ChatAnthropic()
 
 # # DeepSeek
-# llm_deepseek = ChatDeepSeek(
+# model = ChatDeepSeek(
 #     model="deepseek-chat",
 #     temperature=0.3,
 #     top_p=0.85,
@@ -28,12 +28,13 @@ llm_openai = ChatOpenAI(
 # )
 #
 # # Ollama
-# llm_ollama = ChatOllama(
+# model = ChatOllama(
 #     model="llama3",
 #     temperature=0.2,
 #     top_p=0.9,
 # )
 
 # Usage remains identical for all models
-response = llm_openai.invoke("Give me 3 creative naming ideas for a coffee shop.")
+response = model.invoke("Give me 10 creative naming ideas for a coffee shop. "
+                        "Produce text in plan text. Do not use any markdown/html fences.")
 print(response.content)

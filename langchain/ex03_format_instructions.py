@@ -18,7 +18,7 @@ parser = JsonOutputParser(pydantic_object=MovieReview)
 # Define Prompt Template
 prompt = ChatPromptTemplate.from_messages([
     ("system", "Analyze the movie review. {format_instructions}"),
-    ("human", "{review}")
+    ("user", "{review}")
 ]).partial(format_instructions=parser.get_format_instructions())
 
 print("format_instructions: ", parser.get_format_instructions())

@@ -4,7 +4,7 @@ Install:
     pip install "langchain>=1,<2" langchain-chroma langchain-text-splitters pypdf
 
 Example:
-    python index_pdfs.py --pdf-dir ./pdfs --db-dir ./chroma_db
+     python3 rags/ex01_pdf_rag/index_pdfs.py --pdf-dir data/pdfs/ --db-dir /tmp/chroma_db
 """
 
 from __future__ import annotations

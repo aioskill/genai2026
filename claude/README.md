@@ -111,7 +111,7 @@ python claude/ex06_interactive_conversation.py --model claude-3-5-sonnet-2024102
 
 ### Examples that stream:
 ```bash
-python claude/ex02_num_responses.py
+python claude/ex02_streaming_response.py
 ```
 
 ## API Costs

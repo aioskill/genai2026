@@ -5,23 +5,17 @@ import os
 load_dotenv()
 DEFAULT_MODEL = os.environ["OPENAI_MODEL"]
 
-def build_client() -> OpenAI:
-    return OpenAI()
-
-
-def resolve_model() -> str:
-    return os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
-
-
 def print_title(title: str) -> None:
     print(f"\n=== {title} ===")
 
 
-client = build_client()
-model = resolve_model()
+client = OpenAI()
+model = os.environ['OPENAI_MODEL']
 
 print_title("Basic text response")
 
+
+# Make openai request using response api
 response = client.responses.create(
     model=model,
     input=(

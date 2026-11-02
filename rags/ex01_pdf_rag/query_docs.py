@@ -4,9 +4,8 @@ Install:
     pip install "langchain>=1,<2" langchain-chroma langchain-openai
 
 Example:
-    export OPENAI_API_KEY="your-api-key"
-    python query_docs.py --db-dir ./chroma_db \
-        --question "What is the main topic of these documents?"
+ python3 rags/ex01_pdf_rag/query_docs.py --db-dir /tmp/chroma_db --question 'How do I reset the Wi-Fi router?'
+
 """
 
 from __future__ import annotations
