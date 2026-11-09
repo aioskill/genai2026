@@ -36,11 +36,6 @@ response = chain.invoke({"topic": topic})
 print("======= LLM response ======\n", response.content)
 print("===========================\n")
 
-# Extract Tool Calls (if functions/tools were bound)
-if response.tool_calls:
-    for tool_call in response.tool_calls:
-        print("Tool Name:", tool_call["name"])
-        print("Arguments:", tool_call["args"])
 
 # Token Usage Metadata
 if response.usage_metadata:

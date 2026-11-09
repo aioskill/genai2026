@@ -233,3 +233,4 @@ cisco.db*
 cisco/
 /.claude/
 /.codex/
+/langchain/certification_question_generator.py

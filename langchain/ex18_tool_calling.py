@@ -40,35 +40,35 @@ def divide(a: int, b: int) -> float:
     """Divide two integers together."""
     return a / b
 
-
-class Column(BaseModel):
-    name:str
-    type:str
-
-class Table(BaseModel):
-    name:str
-    columns: List[Column]
-
-class Catalog(BaseModel):
-    tables: List[Table]
-
-@tool
-def find_catalog() -> Catalog:
-    """Find accessible data catalog."""
-    return Catalog({})
-
-
-@tool
-def execute_sql(select_statement: str) -> dict:
-    """Multiply two numbers together."""
-    return {'records': []}
-
-@tool
-def get_recent_purchases(user_name: str) -> dict:
-    """Multiply two numbers together."""
-    return {'products': []}
-
-user_prompt = "give top 10 product recommendation based on past purchases. Username: {username}"
+#
+# class Column(BaseModel):
+#     name:str
+#     type:str
+#
+# class Table(BaseModel):
+#     name:str
+#     columns: List[Column]
+#
+# class Catalog(BaseModel):
+#     tables: List[Table]
+#
+# @tool
+# def find_catalog() -> Catalog:
+#     """Find accessible data catalog."""
+#     return Catalog({})
+#
+#
+# @tool
+# def execute_sql(select_statement: str) -> dict:
+#     """Multiply two numbers together."""
+#     return {'records': []}
+#
+# @tool
+# def get_recent_purchases(user_name: str) -> dict:
+#     """Multiply two numbers together."""
+#     return {'products': []}
+#
+# user_prompt = "give top 10 product recommendations based on past purchases for user: {username}"
 
 tools = [multiply, divide]
 model = ChatOpenAI(
