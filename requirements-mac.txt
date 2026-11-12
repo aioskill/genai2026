@@ -1,0 +1,76 @@
+langchain==1.3.14
+langgraph>=1.0,<2.0
+langchain-openai==1.4.1
+langchain-deepseek==1.1.0
+langchain-ollama==1.1.0
+langchain-chroma==1.1.0
+langchain-anthropic==1.5.4
+langchain_mcp_adapters
+# load env variables containing api keys
+python-dotenv==1.2.3
+
+
+openai==2.52.0
+
+# langchain-anthropic contains its owned pinned version
+# anthropic==1.11.0
+
+# required for doc chunking
+langchain-text-splitters==1.1.2
+
+# Holds components that historically raised security vulnerabilities
+# or CVEs (like code execution and evaluation tools).
+# Also contains experimental research features before they become standard
+langchain-experimental==0.4.2
+
+# interactive chat
+click==8.4.2
+tqdm==4.70.0
+
+# prompt_toolkit is a library for building powerful
+# interactive command line applications in Python.
+# without this library handle arrows keys will be an issue
+prompt_toolkit==3.0.53
+# rich library provides beautiful native spinners
+# show spinner is used while waiting for LLM response
+rich==15.0.0
+
+# Chroma DB is an open-source (apache 2.0) vector store used
+# for storing and retrieving vector embeddings.
+chromadb==1.5.9
+
+# Qdrant vector database client. The tutorial in quadrant/ uses its local
+# in-memory mode by default and can also connect to a Qdrant server.
+qdrant-client>=1.14.2,<2.0.0
+
+# Automated testing that finds & fixes AI risk in development
+# Test driven development
+promptfoo==0.1.4
+
+# Jupyter interactive notebook
+jupyter==1.1.1
+
+# PDF reader
+langchain_community==0.4.2
+pypdf==6.15.0
+
+# expose query cabability over REST api
+fastapi
+uvicorn
+
+# vector search
+faiss-cpu==1.10.0
+
+
+
+# code formatting
+flake8==7.3.0
+
+# Tokenizer
+tiktoken
+
+
+
+# tesseact
+pytesseract==0.3.13
+PILLOW==13.0.0
