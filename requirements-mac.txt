@@ -1,76 +1,53 @@
-langchain==1.3.14
-langgraph>=1.0,<2.0
-langchain-openai==1.4.1
-langchain-deepseek==1.1.0
-langchain-ollama==1.1.0
-langchain-chroma==1.1.0
-langchain-anthropic==1.5.4
-langchain_mcp_adapters
-# load env variables containing api keys
-python-dotenv==1.2.3
+# Python 3.9 compatible dependencies for macOS.
+# langchain-mcp-adapters requires Python 3.10 or newer and is omitted on 3.9.
 
+langchain==0.3.27
+langgraph==0.6.8
+langchain-openai==0.3.35
+langchain-deepseek==0.1.4
+langchain-ollama==0.3.9
+langchain-chroma==0.2.6
+langchain-anthropic==0.3.21
 
-openai==2.52.0
+# Load environment variables containing API keys.
+python-dotenv==1.2.1
+openai==2.8.1
 
-# langchain-anthropic contains its owned pinned version
-# anthropic==1.11.0
+# Required for document chunking.
+langchain-text-splitters==0.3.9
 
-# required for doc chunking
-langchain-text-splitters==1.1.2
+# Experimental LangChain features.
+langchain-experimental==0.3.4
 
-# Holds components that historically raised security vulnerabilities
-# or CVEs (like code execution and evaluation tools).
-# Also contains experimental research features before they become standard
-langchain-experimental==0.4.2
-
-# interactive chat
-click==8.4.2
+# Interactive chat.
+click==8.1.8
 tqdm==4.70.0
+prompt_toolkit==3.0.52
+rich==14.2.0
 
-# prompt_toolkit is a library for building powerful
-# interactive command line applications in Python.
-# without this library handle arrows keys will be an issue
-prompt_toolkit==3.0.53
-# rich library provides beautiful native spinners
-# show spinner is used while waiting for LLM response
-rich==15.0.0
-
-# Chroma DB is an open-source (apache 2.0) vector store used
-# for storing and retrieving vector embeddings.
+# Vector stores and clients.
 chromadb==1.5.9
+qdrant-client==1.16.1
+faiss-cpu==1.10.0
 
-# Qdrant vector database client. The tutorial in quadrant/ uses its local
-# in-memory mode by default and can also connect to a Qdrant server.
-qdrant-client>=1.14.2,<2.0.0
-
-# Automated testing that finds & fixes AI risk in development
-# Test driven development
+# Automated testing and notebooks.
 promptfoo==0.1.4
-
-# Jupyter interactive notebook
 jupyter==1.1.1
 
-# PDF reader
-langchain_community==0.4.2
-pypdf==6.15.0
+# PDF and community integrations.
+langchain_community==0.3.31
+pypdf==6.9.2
 
-# expose query cabability over REST api
+# REST API.
 fastapi
 uvicorn
 
-# vector search
-faiss-cpu==1.10.0
-
-
-
-# code formatting
+# Code formatting.
 flake8==7.3.0
 
-# Tokenizer
-tiktoken
+# Tokenizer.
+tiktoken==0.14.0
 
-
-
-# tesseact
+# Tesseract OCR wrapper and image processing.
 pytesseract==0.3.13
-PILLOW==13.0.0
+Pillow==11.3.0
